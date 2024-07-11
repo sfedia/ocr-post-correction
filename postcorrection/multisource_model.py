@@ -201,7 +201,7 @@ class TwoSourceModel:
             + self.ptr_w_x * x_t
         )
         gen_probs = probs * p_gen
-        copy_probs = a_t * (1 - p_gen)
+        copy_probs = a_t - a_t * p_gen
         copy_probs_update = []
         for i in gen_probs:
             copy_probs_update.append([i])
@@ -289,7 +289,7 @@ class TwoSourceModel:
         loss = dy.esum(loss)
         cov_loss = dy.esum(cov_loss)
         diag_loss = dy.esum(diag_loss)
-        return loss + COV_LOSS_WEIGHT * cov_loss + DIAG_LOSS_WEIGHT * diag_loss
+        return loss + cov_loss * COV_LOSS_WEIGHT + diag_loss * DIAG_LOSS_WEIGHT
 
     def get_loss(self, src1, src2, tgt):
         return self.decode_loss(src1, src2, tgt)
